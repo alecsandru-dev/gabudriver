@@ -1,22 +1,91 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 
 const PIN_LENGTH = 4
+const NEON_CYAN = '#00C8FF'
+const NEON_PURPLE = '#B44FFF'
+const NEON_PINK = '#FF2A8A'
+
+function CatAvatar() {
+  return (
+    <motion.div
+      style={{ position: 'relative', width: 92, height: 92 }}
+      animate={{ y: [0, -6, 0] }}
+      transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+    >
+      {/* Spinning conic ring */}
+      <motion.div
+        style={{
+          position: 'absolute', inset: -5, borderRadius: '50%',
+          background: `conic-gradient(from 0deg, ${NEON_CYAN}, transparent 30%, ${NEON_CYAN}60 60%, transparent 90%, ${NEON_CYAN})`,
+          filter: `blur(0.5px) drop-shadow(0 0 14px ${NEON_CYAN}88)`,
+          mask: 'radial-gradient(circle, transparent 57%, black 59%, black 71%, transparent 73%)',
+          WebkitMask: 'radial-gradient(circle, transparent 57%, black 59%, black 71%, transparent 73%)',
+        }}
+        animate={{ rotate: 360 }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+      />
+      {/* Pulsing halo */}
+      <motion.div
+        style={{
+          position: 'absolute', inset: 0, borderRadius: '50%',
+          border: `1.5px solid ${NEON_CYAN}66`,
+        }}
+        animate={{ scale: [1, 1.3, 1], opacity: [0.5, 0, 0.5] }}
+        transition={{ duration: 2.6, repeat: Infinity, ease: 'easeOut' }}
+      />
+      {/* Face */}
+      <div style={{
+        position: 'absolute', inset: 5, borderRadius: '50%',
+        background: `radial-gradient(circle at 30% 25%, ${NEON_CYAN}30 0%, #0C0C18 70%)`,
+        border: `1.5px solid ${NEON_CYAN}88`,
+        boxShadow: `0 0 20px ${NEON_CYAN}55, inset 0 1px 0 rgba(255,255,255,0.18)`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 44, lineHeight: 1,
+      }}>
+        😸
+      </div>
+    </motion.div>
+  )
+}
+
+function KeypadKey({ children, onClick, ghost }: { children?: React.ReactNode; onClick?: () => void; ghost?: boolean }) {
+  return (
+    <motion.button
+      whileTap={{ scale: 0.92 }}
+      onClick={onClick}
+      style={{
+        height: 64, borderRadius: 22,
+        border: '1px solid rgba(255,255,255,0.08)',
+        borderTopColor: 'rgba(255,255,255,0.18)',
+        background: ghost
+          ? 'transparent'
+          : 'linear-gradient(180deg, rgba(28,28,48,0.7) 0%, rgba(14,14,28,0.85) 100%)',
+        color: '#F2F0FF',
+        fontFamily: 'Space Grotesk, system-ui',
+        fontWeight: 600, fontSize: 26,
+        boxShadow: ghost ? 'none' : '0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)',
+        backdropFilter: ghost ? 'none' : 'blur(10px)',
+        cursor: 'pointer',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}
+    >
+      {children}
+    </motion.button>
+  )
+}
 
 export default function LoginPage() {
   const router = useRouter()
-  const [pin, setPin]         = useState('')
-  const [shake, setShake]     = useState(false)
+  const [pin, setPin] = useState('')
+  const [shake, setShake] = useState(false)
+  const [error, setError] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [error, setError]     = useState(false)
 
-  // Auto-submit when PIN is complete
   useEffect(() => {
-    if (pin.length === PIN_LENGTH) {
-      submitPin(pin)
-    }
+    if (pin.length === PIN_LENGTH) submitPin(pin)
   }, [pin]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function submitPin(value: string) {
@@ -27,19 +96,10 @@ export default function LoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password: value }),
       })
-      if (res.ok) {
-        router.push('/')
-        router.refresh()
-      } else {
-        // Wrong PIN — shake and reset
-        setShake(true)
-        setError(true)
-        setTimeout(() => {
-          setPin('')
-          setShake(false)
-          setError(false)
-          setLoading(false)
-        }, 700)
+      if (res.ok) { router.push('/'); router.refresh() }
+      else {
+        setShake(true); setError(true)
+        setTimeout(() => { setPin(''); setShake(false); setError(false); setLoading(false) }, 700)
       }
     } catch {
       setShake(true)
@@ -47,185 +107,131 @@ export default function LoginPage() {
     }
   }
 
-  function press(digit: string) {
-    if (loading) return
-    if (pin.length < PIN_LENGTH) {
-      setPin((p) => p + digit)
-    }
-  }
-
-  function backspace() {
-    if (loading) return
-    setPin((p) => p.slice(0, -1))
-  }
+  function press(digit: string) { if (!loading && pin.length < PIN_LENGTH) setPin((p) => p + digit) }
+  function backspace() { if (!loading) setPin((p) => p.slice(0, -1)) }
 
   const PAD = [
-    ['1', '2', '3'],
-    ['4', '5', '6'],
-    ['7', '8', '9'],
-    ['', '0', '⌫'],
+    ['1','2','3'],
+    ['4','5','6'],
+    ['7','8','9'],
+    ['','0','⌫'],
   ]
 
   return (
-    <div
-      className="min-h-screen-safe flex flex-col items-center justify-between px-6 relative overflow-hidden"
-      style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'max(32px, env(safe-area-inset-bottom))' }}
-    >
+    <div style={{
+      minHeight: '100dvh', display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'space-between',
+      padding: '0 22px',
+      paddingTop: 'max(48px, env(safe-area-inset-top))',
+      paddingBottom: 'max(36px, env(safe-area-inset-bottom))',
+      background: '#05050C', position: 'relative', overflow: 'hidden',
+    }}>
       {/* Background orbs */}
-      <div className="fixed inset-0 pointer-events-none" aria-hidden>
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }} aria-hidden>
         <motion.div
-          animate={{ scale: [1, 1.15, 1], opacity: [0.1, 0.18, 0.1] }}
-          transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute rounded-full"
-          style={{ top: '-20%', left: '-20%', width: '80vw', height: '80vw', background: 'radial-gradient(circle, #00C8FF, transparent 65%)', filter: 'blur(50px)' }}
+          style={{ position:'absolute', width:340, height:340, borderRadius:'50%', left:'-25%', top:'-10%',
+            filter:'blur(70px)', background:`radial-gradient(circle, ${NEON_CYAN}44 0%, transparent 60%)` }}
+          animate={{ scale:[1,1.15,1], opacity:[0.7,1,0.7] }}
+          transition={{ duration:5, repeat:Infinity, ease:'easeInOut' }}
         />
         <motion.div
-          animate={{ scale: [1.1, 1, 1.1], opacity: [0.08, 0.14, 0.08] }}
-          transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
-          className="absolute rounded-full"
-          style={{ bottom: '-20%', right: '-15%', width: '70vw', height: '70vw', background: 'radial-gradient(circle, #FF2A8A, transparent 65%)', filter: 'blur(60px)' }}
+          style={{ position:'absolute', width:300, height:300, borderRadius:'50%', right:'-20%', bottom:'15%',
+            filter:'blur(70px)', background:`radial-gradient(circle, ${NEON_PINK}40 0%, transparent 60%)` }}
+          animate={{ scale:[1.1,1,1.1] }}
+          transition={{ duration:7, repeat:Infinity, ease:'easeInOut', delay:2 }}
         />
+        {/* Dot grid */}
+        <div style={{
+          position:'absolute', inset:0,
+          backgroundImage:'radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px)',
+          backgroundSize:'22px 22px',
+        }} />
       </div>
 
-      {/* Logo */}
+      {/* Brand mark */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="text-center mt-12 relative z-10"
+        style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 8, position: 'relative', zIndex: 1 }}
       >
-        <motion.div
-          animate={{ y: [0, -8, 0] }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-          className="relative inline-block"
-        >
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
-            className="absolute inset-0 rounded-full pointer-events-none"
-            style={{
-              margin: '-6px',
-              background: 'conic-gradient(from 0deg, #00C8FF, #B44FFF, #FF2A8A, #FF6B1A, #00C8FF)',
-              mask: 'radial-gradient(farthest-side, transparent calc(100% - 3px), black calc(100% - 3px))',
-              WebkitMask: 'radial-gradient(farthest-side, transparent calc(100% - 3px), black calc(100% - 3px))',
-              opacity: 0.7,
-            }}
-          />
-          <span className="text-6xl select-none" role="img" aria-label="PisiPilot">🐱</span>
-        </motion.div>
-
-        <h1
-          className="font-display text-3xl font-bold mt-3 mb-1"
-          style={{ background: 'linear-gradient(135deg,#00C8FF 0%,#B44FFF 50%,#FF2A8A 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}
-        >
+        <CatAvatar />
+        <div style={{
+          marginTop: 18,
+          fontFamily: 'Space Grotesk, system-ui', fontWeight: 700,
+          fontSize: 30, letterSpacing: '-0.02em',
+          background: `linear-gradient(135deg, ${NEON_CYAN} 0%, ${NEON_PURPLE} 100%)`,
+          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+        }}>
           PisiPilot
-        </h1>
-        <p className="text-sm" style={{ color: '#9090A8' }}>Bună, Gabu! Introdu PIN-ul.</p>
+        </div>
+        <div style={{ marginTop: 4, fontSize: 13, color: '#9090A8', letterSpacing: '0.02em' }}>
+          Copilotul tău pentru permis
+        </div>
       </motion.div>
 
       {/* PIN dots */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-        className="relative z-10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+        style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, position: 'relative', zIndex: 1 }}
       >
         <motion.div
-          animate={shake ? { x: [-10, 10, -8, 8, -5, 5, 0] } : {}}
+          animate={shake ? { x: [-12, 12, -9, 9, -5, 5, 0] } : {}}
           transition={{ duration: 0.45 }}
-          className="flex items-center gap-5"
-          aria-label={`PIN: ${pin.length} din ${PIN_LENGTH} cifre introduse`}
+          style={{ display: 'flex', gap: 14 }}
+          aria-label={`PIN: ${pin.length} din ${PIN_LENGTH}`}
         >
           {Array.from({ length: PIN_LENGTH }).map((_, i) => {
             const filled = i < pin.length
             return (
               <motion.div
                 key={i}
-                animate={filled ? { scale: [1, 1.25, 1] } : { scale: 1 }}
+                animate={filled ? { scale: [1, 1.3, 1] } : { scale: 1 }}
                 transition={{ duration: 0.15 }}
-                className="w-5 h-5 rounded-full"
                 style={{
-                  background: error && filled
-                    ? '#FF2A8A'
-                    : filled
-                    ? '#00C8FF'
-                    : 'rgba(255,255,255,0.12)',
-                  boxShadow: filled
-                    ? error
-                      ? '0 0 12px rgba(255,42,138,0.8)'
-                      : '0 0 14px rgba(0,200,255,0.8)'
-                    : 'none',
-                  border: filled ? 'none' : '2px solid rgba(255,255,255,0.2)',
+                  width: 18, height: 18, borderRadius: '50%',
+                  background: filled ? (error ? NEON_PINK : NEON_CYAN) : 'transparent',
+                  border: `1.5px solid ${filled ? (error ? NEON_PINK : NEON_CYAN) : 'rgba(255,255,255,0.18)'}`,
+                  boxShadow: filled ? `0 0 14px ${error ? NEON_PINK : NEON_CYAN}aa` : 'none',
+                  transition: 'all 0.18s',
                 }}
               />
             )
           })}
         </motion.div>
-
-        {error && (
-          <motion.p
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center text-xs mt-3"
-            style={{ color: '#FF2A8A' }}
-          >
-            PIN greșit. PisiPilot a clipit suspicios. 🐱
-          </motion.p>
-        )}
+        <div style={{ fontSize: 12.5, color: error ? NEON_PINK : '#4C4C68', letterSpacing: '0.05em', textAlign: 'center' }}>
+          {error ? 'PIN greșit. PisiPilot a clipit suspicios. 🐱' : 'PIN-ul tău secret, fetița mea 🐾'}
+        </div>
       </motion.div>
 
-      {/* Number pad */}
+      {/* Keypad */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-        className="relative z-10 w-full max-w-xs"
+        style={{ width: '100%', maxWidth: 320, position: 'relative', zIndex: 1 }}
       >
-        <div className="grid grid-cols-3 gap-3">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
           {PAD.map((row, ri) =>
             row.map((key, ki) => {
               if (!key) return <div key={`${ri}-${ki}`} />
-
-              const isBackspace = key === '⌫'
+              const isBack = key === '⌫'
               return (
-                <motion.button
+                <KeypadKey
                   key={`${ri}-${ki}`}
-                  whileTap={{ scale: 0.90 }}
-                  transition={{ type: 'spring', stiffness: 500, damping: 25 }}
-                  onClick={() => isBackspace ? backspace() : press(key)}
-                  disabled={loading}
-                  aria-label={isBackspace ? 'Sterge' : key}
-                  className="flex items-center justify-center rounded-2xl tap-target select-none disabled:opacity-40"
-                  style={{
-                    height: 68,
-                    background: isBackspace
-                      ? 'rgba(255,255,255,0.04)'
-                      : 'rgba(255,255,255,0.07)',
-                    border: isBackspace
-                      ? '1px solid rgba(255,255,255,0.06)'
-                      : '1px solid rgba(255,255,255,0.1)',
-                    borderTopColor: isBackspace
-                      ? 'rgba(255,255,255,0.06)'
-                      : 'rgba(255,255,255,0.18)',
-                    boxShadow: isBackspace
-                      ? 'none'
-                      : 'inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 12px rgba(0,0,0,0.3)',
-                  }}
+                  ghost={isBack}
+                  onClick={() => isBack ? backspace() : press(key)}
                 >
-                  {isBackspace ? (
-                    <svg width="22" height="17" viewBox="0 0 22 17" fill="none">
-                      <path d="M8 1L1 8.5L8 16H21V1H8Z" stroke="rgba(255,255,255,0.5)" strokeWidth="1.8" fill="none" strokeLinejoin="round"/>
-                      <path d="M14 5.5L18 11M18 5.5L14 11" stroke="rgba(255,255,255,0.5)" strokeWidth="1.8" strokeLinecap="round"/>
+                  {isBack ? (
+                    <svg width="22" height="18" viewBox="0 0 24 24" fill="none">
+                      <path d="M7 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7l-6-8 6-8Z"
+                        stroke="#9090A8" strokeWidth="1.7" strokeLinejoin="round" />
+                      <path d="M11 9l5 6m0-6l-5 6" stroke="#9090A8" strokeWidth="1.7" strokeLinecap="round" />
                     </svg>
-                  ) : (
-                    <span
-                      className="font-display font-semibold"
-                      style={{ fontSize: 26, color: '#F2F0FF', letterSpacing: '-0.02em' }}
-                    >
-                      {key}
-                    </span>
-                  )}
-                </motion.button>
+                  ) : key}
+                </KeypadKey>
               )
             })
           )}
