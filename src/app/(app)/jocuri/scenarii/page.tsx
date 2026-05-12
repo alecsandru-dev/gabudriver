@@ -179,22 +179,32 @@ export default function ScenariiPage() {
               })}
             </div>
 
-            {/* Explanation + next button */}
-            {phase === 'explanation' && (
-              <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-3"
-              >
-                <div className="rounded-2xl p-4" style={{ background: 'rgba(75,127,255,0.08)', border: '1px solid rgba(75,127,255,0.3)' }}>
-                  <p className="text-xs font-bold mb-1" style={{ color: '#4B7FFF' }}>📖 Explicație</p>
-                  <p className="text-sm leading-relaxed" style={{ color: '#C8C6E0' }}>{current.explanation}</p>
-                </div>
-                <PrimaryButton onClick={handleNext} fullWidth>
-                  {index < scenarios.length - 1 ? 'Scenariul următor →' : 'Finalizează! 🎉'}
-                </PrimaryButton>
-              </motion.div>
-            )}
+            {/* Post-answer block */}
+            {phase === 'explanation' && selected && (() => {
+              const wasCorrect = current.choices.find((c) => c.id === selected)?.isCorrect ?? false
+              return (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="space-y-3"
+                >
+                  {wasCorrect ? (
+                    <div className="rounded-2xl p-4" style={{ background: 'rgba(168,255,30,0.07)', border: '1px solid rgba(168,255,30,0.3)' }}>
+                      <p className="text-xs font-bold mb-1" style={{ color: '#A8FF1E' }}>📖 Explicație</p>
+                      <p className="text-sm leading-relaxed" style={{ color: '#C8C6E0' }}>{current.explanation}</p>
+                    </div>
+                  ) : (
+                    <div className="rounded-2xl p-4" style={{ background: 'rgba(255,42,138,0.07)', border: '1px solid rgba(255,42,138,0.25)' }}>
+                      <p className="text-xs font-bold mb-1" style={{ color: '#FF2A8A' }}>Aproape! 🐾</p>
+                      <p className="text-sm leading-relaxed" style={{ color: '#C8C6E0' }}>Aici greșim gratis. Scenariul următor!</p>
+                    </div>
+                  )}
+                  <PrimaryButton onClick={handleNext} fullWidth variant={wasCorrect ? 'lime' : 'orange'}>
+                    {index < scenarios.length - 1 ? 'Scenariul următor →' : 'Finalizează! 🎉'}
+                  </PrimaryButton>
+                </motion.div>
+              )
+            })()}
           </motion.div>
         )}
 
