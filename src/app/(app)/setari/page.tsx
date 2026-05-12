@@ -4,17 +4,25 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { PisiPilotBubble } from '@/components/PisiPilotBubble'
 import { PrimaryButton } from '@/components/PrimaryButton'
+import { GlassCard } from '@/components/GlassCard'
 import { resetState, clearPraiseHistory } from '@/lib/storage'
+
+const GOLD   = '#FFD700'
+const ORANGE = '#FF6B1A'
+const PINK   = '#FF2A8A'
+const INK    = '#F2F0FF'
+const FADE   = '#4C4C68'
 
 export default function SetariPage() {
   const router = useRouter()
-  const [confirmReset, setConfirmReset]   = useState(false)
+  const [confirmReset,  setConfirmReset]  = useState(false)
   const [confirmPraise, setConfirmPraise] = useState(false)
-  const [done, setDone]                   = useState<string | null>(null)
+  const [done, setDone] = useState<string | null>(null)
 
   async function handleLogout() {
     await fetch('/api/auth/logout', { method: 'POST' })
-    router.push('/login'); router.refresh()
+    router.push('/login')
+    router.refresh()
   }
 
   function handleResetProgress() {
@@ -32,102 +40,120 @@ export default function SetariPage() {
   }
 
   return (
-    <div className="px-4 space-y-4">
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="pt-2">
-        <h1 className="font-display text-xl font-bold" style={{ color: '#F2F0FF' }}>Setări ⚙️</h1>
-        <p className="text-sm mt-0.5" style={{ color: '#4C4C68' }}>Aplicație și progres</p>
+    <div style={{ padding:'6px 14px 16px', display:'flex', flexDirection:'column', gap:14 }}>
+      <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} style={{ padding:'2px 2px 0' }}>
+        <div style={{ fontFamily:'Space Grotesk,system-ui', fontWeight:700, fontSize:22, color:INK }}>Setări ⚙️</div>
+        <div style={{ fontSize:12, color:FADE, marginTop:1 }}>Aplicație și progres</div>
       </motion.div>
 
       <PisiPilotBubble message="Totul e în ordine, Gabu. Dacă resetezi, o luăm de la zero împreună." mood="calm" />
 
       {done && (
-        <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl p-4 chip-success">
-          <p className="text-sm">✓ {done}</p>
+        <motion.div initial={{ opacity:0, y:-8 }} animate={{ opacity:1, y:0 }}
+          style={{ padding:'12px 16px', borderRadius:16,
+            background:'rgba(168,255,30,0.08)', border:'1px solid rgba(168,255,30,0.3)' }}>
+          <div style={{ fontSize:13, color:'#A8FF1E' }}>✓ {done}</div>
         </motion.div>
       )}
 
       {/* App info */}
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-        className="card p-5"
-        style={{ border: '1px solid rgba(0,200,255,0.2)' }}
-      >
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl"
-            style={{ background: 'linear-gradient(135deg,#00A8E8,#B44FFF)', boxShadow: '0 4px 16px rgba(0,200,255,0.3)' }}>
-            🐱
-          </div>
+      <GlassCard accent="#00C8FF" padding={20} style={{ borderRadius:22 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:14, marginBottom:14 }}>
+          <div style={{
+            width:52, height:52, borderRadius:18, flexShrink:0,
+            background:'linear-gradient(135deg,#007ACC,#00C8FF)',
+            boxShadow:'0 4px 16px rgba(0,200,255,0.3)',
+            display:'flex', alignItems:'center', justifyContent:'center', fontSize:26,
+          }}>🐱</div>
           <div>
-            <p className="font-display font-bold" style={{ color: '#F2F0FF' }}>PisiPilot</p>
-            <p className="text-xs" style={{ color: '#4C4C68' }}>v1.0 · Copilotul pufos al lui Gabu 🐾</p>
+            <div style={{ fontFamily:'Space Grotesk,system-ui', fontWeight:700, fontSize:16, color:INK }}>PisiPilot</div>
+            <div style={{ fontSize:11.5, color:FADE, marginTop:2 }}>v1.2 · Copilotul pufos al lui Gabu 🐾</div>
           </div>
         </div>
-        <p className="text-xs leading-relaxed rounded-xl p-3" style={{ background: 'rgba(255,255,255,0.04)', color: '#9090A8' }}>
-          PisiPilot este o aplicație de relaxare și antrenament informal. <strong style={{ color: '#F2F0FF' }}>Nu înlocuiește</strong> școala de șoferi, legislația oficială sau evaluarea psihologică autorizată.
-        </p>
-      </motion.div>
+        <div style={{
+          padding:'10px 12px', borderRadius:12, fontSize:12, color:'#9090A8', lineHeight:1.6,
+          background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.06)',
+        }}>
+          PisiPilot este o aplicație de relaxare și antrenament informal.{' '}
+          <strong style={{ color:INK }}>Nu înlocuiește</strong> școala de șoferi,
+          legislația oficială sau evaluarea psihologică autorizată.
+        </div>
+      </GlassCard>
 
       {/* Actions */}
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="card p-5 space-y-3">
-        <p className="font-display font-bold text-sm" style={{ color: '#F2F0FF' }}>Acțiuni</p>
+      <GlassCard padding={16} style={{ borderRadius:22 }}>
+        <div style={{ fontFamily:'Space Grotesk,system-ui', fontWeight:700, fontSize:14, color:INK, marginBottom:12 }}>
+          Acțiuni
+        </div>
+        <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+          <button onClick={handleClearPraise}
+            style={{
+              width:'100%', textAlign:'left', padding:'14px 16px', borderRadius:16, cursor:'pointer',
+              background:'rgba(255,215,0,0.08)', border:'1px solid rgba(255,215,0,0.2)',
+            }}>
+            <div style={{ fontFamily:'Space Grotesk,system-ui', fontWeight:600, fontSize:13.5, color:GOLD }}>
+              {confirmPraise ? '⚠️ Confirmi ștergerea laudelor?' : '🗑️ Șterge peretele de laude'}
+            </div>
+            <div style={{ fontSize:11, color:FADE, marginTop:2 }}>
+              {confirmPraise ? 'Apasă din nou pentru confirmare' : 'Laudele rămân în suflet oricum'}
+            </div>
+          </button>
 
-        <button onClick={handleClearPraise}
-          className="w-full text-left p-4 rounded-2xl tap-target transition-all"
-          style={{ background: 'rgba(255,215,0,0.08)', border: '1px solid rgba(255,215,0,0.2)' }}>
-          <p className="font-semibold text-sm" style={{ color: '#FFD700' }}>
-            {confirmPraise ? '⚠️ Confirmi ștergerea laudelor?' : '🗑️ Șterge peretele de laude'}
-          </p>
-          <p className="text-xs mt-0.5" style={{ color: '#4C4C68' }}>
-            {confirmPraise ? 'Apasă din nou pentru confirmare' : 'Laudele rămân în suflet oricum'}
-          </p>
-        </button>
+          <button onClick={handleResetProgress}
+            style={{
+              width:'100%', textAlign:'left', padding:'14px 16px', borderRadius:16, cursor:'pointer',
+              background:'rgba(255,42,138,0.08)', border:'1px solid rgba(255,42,138,0.2)',
+            }}>
+            <div style={{ fontFamily:'Space Grotesk,system-ui', fontWeight:600, fontSize:13.5, color:PINK }}>
+              {confirmReset ? '⚠️ Ești sigură? Resetează totul?' : '🔄 Resetează progresul'}
+            </div>
+            <div style={{ fontSize:11, color:FADE, marginTop:2 }}>
+              {confirmReset ? 'Apasă din nou pentru confirmare' : 'XP, badge-uri, statistici — totul'}
+            </div>
+          </button>
 
-        <button onClick={handleResetProgress}
-          className="w-full text-left p-4 rounded-2xl tap-target transition-all"
-          style={{ background: 'rgba(255,42,138,0.08)', border: '1px solid rgba(255,42,138,0.2)' }}>
-          <p className="font-semibold text-sm" style={{ color: '#FF2A8A' }}>
-            {confirmReset ? '⚠️ Ești sigură? Resetează totul?' : '🔄 Resetează progresul'}
-          </p>
-          <p className="text-xs mt-0.5" style={{ color: '#4C4C68' }}>
-            {confirmReset ? 'Apasă din nou pentru confirmare' : 'XP, badge-uri, statistici — totul'}
-          </p>
-        </button>
+          {(confirmReset || confirmPraise) && (
+            <motion.button initial={{ opacity:0 }} animate={{ opacity:1 }}
+              onClick={() => { setConfirmReset(false); setConfirmPraise(false) }}
+              style={{
+                width:'100%', padding:'12px', borderRadius:16, cursor:'pointer',
+                background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)',
+                color:FADE, fontSize:13, fontFamily:'Space Grotesk,system-ui',
+              }}>
+              ✕ Anulează
+            </motion.button>
+          )}
+        </div>
+      </GlassCard>
 
-        {(confirmReset || confirmPraise) && (
-          <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            onClick={() => { setConfirmReset(false); setConfirmPraise(false) }}
-            className="w-full p-3 rounded-2xl text-sm tap-target"
-            style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: '#4C4C68' }}>
-            ✕ Anulează
-          </motion.button>
-        )}
-      </motion.div>
-
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-        <PrimaryButton onClick={handleLogout} fullWidth variant="danger">
-          🚪 Delogare
-        </PrimaryButton>
-        <p className="text-xs text-center mt-2" style={{ color: '#4C4C68' }}>
-          Parola va fi necesară la revenire.
-        </p>
-      </motion.div>
+      {/* Logout */}
+      <PrimaryButton onClick={handleLogout} fullWidth variant="danger">
+        🚪 Delogare
+      </PrimaryButton>
+      <div style={{ textAlign:'center', fontSize:11.5, color:FADE }}>
+        Parola va fi necesară la revenire.
+      </div>
 
       {/* Made for Gabu */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-        className="card p-5 text-center space-y-2 pb-2"
-        style={{ border: '1px solid rgba(255,107,26,0.2)', boxShadow: 'var(--glass-shadow), 0 0 40px rgba(255,107,26,0.06)' }}
-      >
-        <div className="text-3xl animate-float">🐱🚗</div>
-        <p className="font-display font-bold text-sm" style={{ color: '#FF6B1A' }}>Facut special pentru Gabu</p>
-        <p className="text-xs leading-relaxed" style={{ color: '#4C4C68' }}>
-          Fiecare sesiune te aduce mai aproape de permis.<br />
+      <GlassCard accent={ORANGE} padding={20} style={{ borderRadius:22, textAlign:'center' }}>
+        <div style={{ fontSize:32, marginBottom:8 }} className="animate-float">🐱🚗</div>
+        <div style={{ fontFamily:'Space Grotesk,system-ui', fontWeight:700, fontSize:14, color:ORANGE }}>
+          Facut special pentru Gabu
+        </div>
+        <div style={{ fontSize:12, color:FADE, lineHeight:1.6, marginTop:6 }}>
+          Fiecare sesiune te aduce mai aproape de permis.<br/>
           PisiPilot e mereu în dreapta ta. 🐾
-        </p>
-        <div className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 mt-1"
-          style={{ background: 'rgba(255,107,26,0.1)', border: '1px solid rgba(255,107,26,0.2)', color: '#FF6B1A', fontSize: 11, fontWeight: 700 }}>
+        </div>
+        <div style={{
+          display:'inline-flex', alignItems:'center', gap:6, marginTop:10,
+          padding:'6px 14px', borderRadius:999,
+          background:`${ORANGE}12`, border:`1px solid ${ORANGE}30`,
+          color:ORANGE, fontSize:11, fontWeight:700,
+          fontFamily:'Space Grotesk,system-ui',
+        }}>
           💝 Cu drag, de la cineva care vrea să te vadă șoferind
         </div>
-      </motion.div>
+      </GlassCard>
     </div>
   )
 }

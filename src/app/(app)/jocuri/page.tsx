@@ -8,12 +8,13 @@ const N = { cyan:'#00C8FF', pink:'#FF2A8A', lime:'#A8FF1E', orange:'#FF6B1A', bl
 const S = { ink:'#F2F0FF', inkFade:'#4C4C68', inkMute:'#9090A8' }
 
 const GAMES = [
-  { emoji:'🏎️', title:'Trepte',     sub:'Schimbă vitezele la timp pe RPM',         accent:N.orange, href:'/jocuri/trepte',   badge:'Nou' },
-  { emoji:'⚡',  title:'Reacție',    sub:'Apasă când semaforul devine verde',        accent:N.cyan,   href:'/jocuri/reactie'   },
-  { emoji:'🚦',  title:'Semne',      sub:'Memorează și recunoaște semne românești',  accent:N.blue,   href:'/jocuri/semne'     },
-  { emoji:'🔧',  title:'Viteze',     sub:'Simulator cu ambreiaj și frână',           accent:N.purple, href:'/jocuri/viteze'    },
-  { emoji:'🎭',  title:'Scenarii',   sub:'Cum reacționezi în trafic?',               accent:N.pink,   href:'/jocuri/scenarii'  },
-  { emoji:'🫁',  title:'Calm Mode',  sub:'Respiră 60 secunde înainte de drum',       accent:N.lime,   href:'/calm'             },
+  { emoji:'🏎️', title:'Trepte',       sub:'Schimbă vitezele la timp pe RPM',            accent:N.orange, href:'/jocuri/trepte'       },
+  { emoji:'⚡',  title:'Reacție',      sub:'Apasă când semaforul devine verde',           accent:N.cyan,   href:'/jocuri/reactie'      },
+  { emoji:'🛑',  title:'Priorități',   sub:'Cine trece primul la intersecție?',           accent:'#FFD700', href:'/jocuri/intersectie', badge:'Nou' },
+  { emoji:'🚦',  title:'Semne',        sub:'Memorează și recunoaște semne românești',     accent:N.blue,   href:'/jocuri/semne'        },
+  { emoji:'🔧',  title:'Viteze',       sub:'Simulator cu ambreiaj și frână',              accent:N.purple, href:'/jocuri/viteze'       },
+  { emoji:'🎭',  title:'Scenarii',     sub:'Cum reacționezi în trafic?',                  accent:N.pink,   href:'/jocuri/scenarii'     },
+  { emoji:'🫁',  title:'Calm Mode',    sub:'Respiră 60 secunde înainte de drum',          accent:N.lime,   href:'/calm'                },
 ]
 
 function GameRow({ emoji, title, sub, accent, href, badge, stats }: {

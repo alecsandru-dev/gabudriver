@@ -15,9 +15,10 @@ const N = { cyan:'#00C8FF', pink:'#FF2A8A', lime:'#A8FF1E', orange:'#FF6B1A', bl
 const S = { ink:'#F2F0FF', inkSoft:'#C8C6E0', inkMute:'#9090A8', inkFade:'#4C4C68' }
 
 const GAMES = [
-  { emoji:'🏎️', label:'Trepte',   href:'/jocuri/trepte',   accent:N.orange },
-  { emoji:'⚡',  label:'Reacție',  href:'/jocuri/reactie',  accent:N.cyan   },
-  { emoji:'🚦',  label:'Semne',    href:'/jocuri/semne',    accent:N.blue   },
+  { emoji:'🏎️', label:'Trepte',      href:'/jocuri/trepte',       accent:N.orange },
+  { emoji:'⚡',  label:'Reacție',     href:'/jocuri/reactie',      accent:N.cyan   },
+  { emoji:'🛑',  label:'Priorități',  href:'/jocuri/intersectie',  accent:N.gold   },
+  { emoji:'🚦',  label:'Semne',       href:'/jocuri/semne',        accent:N.blue   },
   { emoji:'🔧',  label:'Viteze',   href:'/jocuri/viteze',   accent:N.purple },
   { emoji:'🎭',  label:'Scenarii', href:'/jocuri/scenarii', accent:N.pink   },
   { emoji:'🫁',  label:'Calm',     href:'/calm',            accent:N.lime   },
