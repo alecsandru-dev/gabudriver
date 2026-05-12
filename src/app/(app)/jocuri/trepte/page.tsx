@@ -600,12 +600,11 @@ export default function TreptePage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.08 }}
               onClick={() => { setScenarioIdx(i); setBubbleMsg(s.description) }}
-              className={clsx(
-                'w-full text-left p-4 rounded-3xl border-2 tap-target transition-all',
-                scenarioIdx === i
-                  ? 'bg-orange-50 border-orange-400 shadow-glow-orange'
-                  : 'bg-white border-pisi-border'
-              )}
+              className="w-full text-left p-4 rounded-3xl tap-target transition-all"
+              style={scenarioIdx === i
+                ? { background: 'rgba(255,107,26,0.1)', border: '2px solid rgba(255,107,26,0.5)', boxShadow: '0 0 20px rgba(255,107,26,0.2)' }
+                : { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }
+              }
             >
               <div className="flex items-center gap-3">
                 <span className="text-2xl">{s.emoji}</span>
@@ -651,7 +650,7 @@ export default function TreptePage() {
                 <p className={clsx('font-bold text-sm', qualityColor[r.quality])}>
                   {r.direction === 'up' ? '↑' : '↓'} {r.quality === 'perfect' ? 'Perfect!' : r.quality === 'good' ? 'Bine!' : r.quality === 'ok' ? 'OK' : 'Greșit'}
                 </p>
-                <p className="text-xs text-gray-400 mt-0.5">{r.rpm} RPM · +{r.points}p</p>
+                <p className="text-xs mt-0.5" style={{ color: '#4C4C68' }}>{r.rpm} RPM · +{r.points}p</p>
               </div>
             ))}
           </div>
@@ -660,7 +659,7 @@ export default function TreptePage() {
           </p>
         </motion.div>
         <div className="flex gap-3">
-          <motion.button whileTap={{ scale: 0.97 }} onClick={() => { setPhase('intro'); setScenarioIdx(0) }} className="flex-1 h-12 bg-white border-2 border-orange-200 text-orange-500 font-semibold rounded-2xl">
+          <motion.button whileTap={{ scale: 0.97 }} onClick={() => { setPhase('intro'); setScenarioIdx(0) }} className="flex-1 h-12 font-semibold rounded-2xl" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#9090A8' }}>
             Alt scenariu
           </motion.button>
           <motion.button whileTap={{ scale: 0.97 }} onClick={() => { startGame() }} className="flex-1 h-12 gradient-primary text-white font-semibold rounded-2xl">
@@ -721,7 +720,7 @@ export default function TreptePage() {
           {/* Speed */}
           <div className="text-center">
             <p className="text-2xl font-bold text-white leading-none">{speed}</p>
-            <p className="text-[10px] text-gray-500 mt-0.5">km/h</p>
+            <p className="text-[10px] mt-0.5" style={{ color: '#4C4C68' }}>km/h</p>
           </div>
 
           {/* Gear display */}
@@ -732,7 +731,7 @@ export default function TreptePage() {
             className="w-14 h-14 rounded-2xl flex flex-col items-center justify-center"
             style={{ background: 'rgba(255,255,255,0.07)', border: '1.5px solid rgba(255,255,255,0.12)' }}
           >
-            <p className="text-[10px] text-gray-500">Treapta</p>
+            <p className="text-[10px]" style={{ color: '#4C4C68' }}>Treapta</p>
             <p className="text-3xl font-bold text-white leading-none">{GEAR_LABELS[gear]}</p>
           </motion.div>
 
@@ -791,16 +790,16 @@ export default function TreptePage() {
       {/* Controls */}
       <div className="flex items-center gap-3 pb-2">
         {/* Downshift */}
+        {/* Downshift */}
         <motion.button
           whileTap={{ scale: 0.94 }}
           onClick={() => handleShift('down')}
           disabled={phase !== 'clutch_in' || gear <= 1}
-          className={clsx(
-            'flex-1 h-16 rounded-2xl font-bold text-sm transition-all tap-target flex flex-col items-center justify-center gap-0.5',
-            phase === 'clutch_in' && gear > 1
-              ? 'bg-blue-500 text-white shadow-lg'
-              : 'bg-gray-100 text-gray-300 cursor-not-allowed'
-          )}
+          className="flex-1 h-16 rounded-2xl font-bold text-sm tap-target flex flex-col items-center justify-center gap-0.5"
+          style={phase === 'clutch_in' && gear > 1
+            ? { background: 'rgba(75,127,255,0.2)', border: '1px solid rgba(75,127,255,0.5)', color: '#4B7FFF', boxShadow: '0 0 16px rgba(75,127,255,0.25)' }
+            : { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', color: '#4C4C68', cursor: 'not-allowed' }
+          }
         >
           <span className="text-2xl">🔽</span>
           <span className="text-[11px]">Coboară</span>
@@ -811,14 +810,14 @@ export default function TreptePage() {
           whileTap={{ scale: 0.93 }}
           onClick={handleClutch}
           disabled={phase === 'result'}
-          className={clsx(
-            'flex-[1.4] h-20 rounded-3xl font-bold text-base transition-all tap-target flex flex-col items-center justify-center gap-1',
+          className="flex-[1.4] h-20 rounded-3xl font-display font-bold text-base tap-target flex flex-col items-center justify-center gap-1"
+          style={
             phase === 'clutch_in' || phase === 'shifted'
-              ? 'bg-gradient-to-b from-violet-500 to-purple-600 text-white shadow-glow-purple scale-105'
+              ? { background: 'linear-gradient(135deg,#8C00E0,#B44FFF)', color: '#fff', boxShadow: '0 0 24px rgba(180,79,255,0.5), 0 4px 16px rgba(180,79,255,0.25)', transform: 'scale(1.05)', border: '1px solid rgba(255,255,255,0.15)' }
               : phase === 'playing'
-              ? 'gradient-primary text-white shadow-glow-orange'
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-          )}
+              ? { background: 'linear-gradient(135deg,#E04400,#FF6B1A)', color: '#fff', boxShadow: '0 0 24px rgba(255,107,26,0.5), 0 4px 16px rgba(255,107,26,0.25)', border: '1px solid rgba(255,255,255,0.12)' }
+              : { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', color: '#4C4C68', cursor: 'not-allowed' }
+          }
         >
           <span className="text-xl">🦶</span>
           <span className="text-sm leading-none">
@@ -834,12 +833,11 @@ export default function TreptePage() {
           whileTap={{ scale: 0.94 }}
           onClick={() => handleShift('up')}
           disabled={phase !== 'clutch_in' || gear >= 5}
-          className={clsx(
-            'flex-1 h-16 rounded-2xl font-bold text-sm transition-all tap-target flex flex-col items-center justify-center gap-0.5',
-            phase === 'clutch_in' && gear < 5
-              ? 'bg-emerald-500 text-white shadow-lg'
-              : 'bg-gray-100 text-gray-300 cursor-not-allowed'
-          )}
+          className="flex-1 h-16 rounded-2xl font-bold text-sm tap-target flex flex-col items-center justify-center gap-0.5"
+          style={phase === 'clutch_in' && gear < 5
+            ? { background: 'rgba(168,255,30,0.15)', border: '1px solid rgba(168,255,30,0.45)', color: '#A8FF1E', boxShadow: '0 0 16px rgba(168,255,30,0.2)' }
+            : { background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', color: '#4C4C68', cursor: 'not-allowed' }
+          }
         >
           <span className="text-2xl">🔼</span>
           <span className="text-[11px]">Urcă</span>

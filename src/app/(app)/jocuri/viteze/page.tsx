@@ -131,12 +131,12 @@ export default function VitezePage() {
     setBubbleMsg(getRandomFrom(GEARBOX_MESSAGES.ready))
   }
 
-  const statusInfo: Record<GameResult, { label: string; color: string; emoji: string }> = {
-    idle: { label: 'Motor pornit', color: 'text-blue-500', emoji: '🔑' },
-    stall: { label: 'S-a oprit motorul', color: 'text-red-500', emoji: '💨' },
-    tooMuchGas: { label: 'Prea mult gaz', color: 'text-orange-500', emoji: '🚀' },
-    success: { label: 'Pornire lină', color: 'text-emerald-600', emoji: '✅' },
-    needsGas: { label: 'Eliberează ambreiajul', color: 'text-blue-500', emoji: '⚙️' },
+  const statusInfo: Record<GameResult, { label: string; hexColor: string; emoji: string }> = {
+    idle:       { label: 'Motor pornit',           hexColor: '#00C8FF', emoji: '🔑' },
+    stall:      { label: 'S-a oprit motorul',       hexColor: '#FF2A8A', emoji: '💨' },
+    tooMuchGas: { label: 'Prea mult gaz',           hexColor: '#FF6B1A', emoji: '🚀' },
+    success:    { label: 'Pornire lină',            hexColor: '#A8FF1E', emoji: '✅' },
+    needsGas:   { label: 'Eliberează ambreiajul',   hexColor: '#4B7FFF', emoji: '⚙️' },
   }
 
   const status = statusInfo[result]
@@ -156,12 +156,16 @@ export default function VitezePage() {
           key={result}
           initial={{ opacity: 0, scale: 0.97 }}
           animate={{ opacity: 1, scale: 1 }}
-          className={`card p-4 flex items-center gap-3 ${result === 'success' ? 'bg-emerald-50 border-emerald-100' : result === 'stall' ? 'bg-red-50 border-red-100' : ''}`}
+          className="card p-4 flex items-center gap-3"
+          style={{
+            border: `1px solid ${status.hexColor}35`,
+            boxShadow: `var(--glass-shadow), 0 0 20px ${status.hexColor}12`,
+          }}
         >
           <span className="text-3xl">{status.emoji}</span>
           <div>
-            <p className={`font-bold ${status.color}`}>{status.label}</p>
-            <p className="text-xs text-pisi-muted">{attempts > 0 ? `${attempts} ${attempts === 1 ? 'tentativă' : 'tentative'}` : 'Prima tentativă'}</p>
+            <p className="font-bold" style={{ color: status.hexColor }}>{status.label}</p>
+            <p className="text-xs" style={{ color: '#4C4C68' }}>{attempts > 0 ? `${attempts} ${attempts === 1 ? 'tentativă' : 'tentative'}` : 'Prima tentativă'}</p>
           </div>
           {result === 'success' && (
             <motion.span
@@ -182,15 +186,15 @@ export default function VitezePage() {
           <span className="text-xs font-semibold text-pisi-muted uppercase tracking-wide">Turație motor</span>
           <span className="text-sm font-bold" style={{ color: rpmColor }}>{rpm.toFixed(0)} RPM</span>
         </div>
-        <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-4 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
           <motion.div
             className="h-full rounded-full transition-all duration-100"
-            style={{ width: `${rpmPercent}%`, backgroundColor: rpmColor }}
+            style={{ width: `${rpmPercent}%`, backgroundColor: rpmColor, boxShadow: `0 0 8px ${rpmColor}` }}
           />
         </div>
-        <div className="flex justify-between mt-1 text-[10px] text-gray-400">
+        <div className="flex justify-between mt-1 text-[10px]" style={{ color: '#4C4C68' }}>
           <span>800</span>
-          <span className="text-emerald-500">2000–3500 zona ideală</span>
+          <span style={{ color: '#A8FF1E' }}>2000–3500 zona ideală</span>
           <span>6500</span>
         </div>
       </div>
@@ -199,7 +203,7 @@ export default function VitezePage() {
       <div className="card p-5 space-y-6">
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <label className="text-sm font-semibold text-violet-700">🦶 Ambreiaj</label>
+            <label className="text-sm font-semibold" style={{ color: '#B44FFF' }}>🦶 Ambreiaj</label>
             <span className="text-xs text-pisi-muted font-mono">
               {clutch === 100 ? 'Apăsat ✓' : clutch === 0 ? 'Eliberat' : `${clutch}%`}
             </span>
@@ -211,17 +215,17 @@ export default function VitezePage() {
             value={clutch}
             onChange={(e) => { setClutch(Number(e.target.value)); setResult('idle') }}
             className="w-full clutch"
-            style={{ background: `linear-gradient(to right, #A78BFA ${clutch}%, #e5e7eb ${clutch}%)` }}
+            style={{ background: `linear-gradient(to right, #B44FFF ${clutch}%, rgba(255,255,255,0.08) ${clutch}%)` }}
             aria-label="Ambreiaj"
           />
-          <p className="text-xs text-violet-500">
+          <p className="text-xs" style={{ color: '#B44FFF' }}>
             {clutch > 70 ? 'Apăsat complet → eliberează treptat' : clutch > 35 ? '⚡ Zona de cuplare!' : 'Ambreiaj eliberat'}
           </p>
         </div>
 
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <label className="text-sm font-semibold text-orange-600">⛽ Accelerație</label>
+            <label className="text-sm font-semibold" style={{ color: '#FF6B1A' }}>⛽ Accelerație</label>
             <span className="text-xs text-pisi-muted font-mono">{gas}%</span>
           </div>
           <input
@@ -231,10 +235,10 @@ export default function VitezePage() {
             value={gas}
             onChange={(e) => { setGas(Number(e.target.value)); setResult('idle') }}
             className="w-full"
-            style={{ background: `linear-gradient(to right, #FF8E53 ${gas}%, #e5e7eb ${gas}%)` }}
+            style={{ background: `linear-gradient(to right, #FF6B1A ${gas}%, rgba(255,255,255,0.08) ${gas}%)` }}
             aria-label="Acceleratie"
           />
-          <p className="text-xs text-orange-500">
+          <p className="text-xs" style={{ color: '#FF6B1A' }}>
             {gas === 0 ? 'Fără gaz' : gas < 25 ? 'Gaz minim' : gas < 60 ? '✓ Gaz optim' : 'Gaz mult — risc de supra-turație'}
           </p>
         </div>
@@ -244,15 +248,17 @@ export default function VitezePage() {
       <div className="card p-4 flex items-center gap-4 overflow-hidden">
         <div className="text-3xl select-none">🚗</div>
         <div className="flex-1">
-          <motion.div
-            className="h-1.5 bg-gray-100 rounded-full overflow-hidden"
-          >
+          <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
             <motion.div
-              className={`h-full rounded-full ${result === 'success' ? 'gradient-mint' : 'bg-gray-300'}`}
+              className="h-full rounded-full"
+              style={{
+                background: result === 'success' ? 'linear-gradient(90deg,#82D400,#A8FF1E)' : 'rgba(255,255,255,0.15)',
+                boxShadow: result === 'success' ? '0 0 8px rgba(168,255,30,0.6)' : 'none',
+              }}
               animate={{ width: result === 'success' ? '100%' : result === 'idle' ? `${Math.max(5, (100 - clutch) * 0.3)}%` : '0%' }}
               transition={{ duration: 0.5 }}
             />
-          </motion.div>
+          </div>
           <p className="text-xs text-pisi-muted mt-1">
             {result === 'success' ? '🏁 Mașina se mișcă!' : result === 'stall' ? '💤 Motor oprit' : 'Viteza 0'}
           </p>
@@ -279,11 +285,11 @@ export default function VitezePage() {
           className="grid grid-cols-2 gap-3 pb-2"
         >
           <div className="card p-4 text-center">
-            <p className="text-2xl font-bold text-emerald-500">{displaySuccesses}</p>
-            <p className="text-xs text-pisi-muted mt-0.5">Porniri reușite</p>
+            <p className="text-2xl font-display font-bold" style={{ color: '#A8FF1E' }}>{displaySuccesses}</p>
+            <p className="text-xs mt-0.5" style={{ color: '#4C4C68' }}>Porniri reușite</p>
           </div>
           <div className="card p-4 text-center">
-            <p className="text-2xl font-bold text-red-400">{displayStalls}</p>
+            <p className="text-2xl font-display font-bold" style={{ color: '#FF2A8A' }}>{displayStalls}</p>
             <p className="text-xs text-pisi-muted mt-0.5">Calări (normale!)</p>
           </div>
         </motion.div>

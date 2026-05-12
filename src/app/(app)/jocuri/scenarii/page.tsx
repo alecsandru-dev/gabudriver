@@ -107,9 +107,10 @@ export default function ScenariiPage() {
       <PisiPilotBubble message={bubbleMsg} mood={phase === 'explanation' ? 'thinking' : 'happy'} />
 
       {/* Progress */}
-      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+      <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.07)' }}>
         <motion.div
-          className="h-full rounded-full gradient-primary"
+          className="h-full rounded-full"
+          style={{ background: 'linear-gradient(90deg,#FF6B1A,#FF2A8A)', boxShadow: '0 0 8px rgba(255,107,26,0.5)' }}
           animate={{ width: `${((index + (phase === 'done' ? 1 : 0)) / scenarios.length) * 100}%` }}
           transition={{ duration: 0.4 }}
         />
@@ -130,7 +131,7 @@ export default function ScenariiPage() {
                 <span className="text-2xl">{current.emoji}</span>
                 <h2 className="font-bold text-pisi-text">{current.title}</h2>
               </div>
-              <p className="text-sm text-pisi-text leading-relaxed bg-gray-50 rounded-2xl p-4">
+              <p className="text-sm leading-relaxed rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.07)', color: '#C8C6E0' }}>
                 {current.story}
               </p>
             </div>
@@ -142,10 +143,15 @@ export default function ScenariiPage() {
                 const showResult = phase === 'explanation'
                 const isCorrectChoice = choice.isCorrect
 
-                let bg = 'bg-white border-pisi-border'
-                if (showResult && isSelected && isCorrectChoice) bg = 'bg-emerald-50 border-emerald-400'
-                else if (showResult && isSelected && !isCorrectChoice) bg = 'bg-red-50 border-red-300'
-                else if (showResult && isCorrectChoice) bg = 'bg-emerald-50 border-emerald-200'
+                // Dark neon choice card styling
+                let cardBg    = 'rgba(255,255,255,0.04)'
+                let cardBorder = 'rgba(255,255,255,0.08)'
+                let labelBg   = 'rgba(255,255,255,0.08)'
+                let labelColor = '#4C4C68'
+                if (showResult && isSelected && isCorrectChoice)  { cardBg = 'rgba(168,255,30,0.08)';  cardBorder = 'rgba(168,255,30,0.45)';  labelBg = '#A8FF1E'; labelColor = '#0a1200' }
+                else if (showResult && isSelected)                 { cardBg = 'rgba(255,42,138,0.08)';  cardBorder = 'rgba(255,42,138,0.45)'; labelBg = '#FF2A8A'; labelColor = '#fff' }
+                else if (showResult && isCorrectChoice)            { cardBg = 'rgba(168,255,30,0.06)';  cardBorder = 'rgba(168,255,30,0.3)';  labelBg = 'rgba(168,255,30,0.2)'; labelColor = '#A8FF1E' }
+                else if (choice.isFunny && !selected)              { cardBg = 'rgba(180,79,255,0.06)';  cardBorder = 'rgba(180,79,255,0.25)' }
 
                 return (
                   <motion.button
@@ -153,26 +159,19 @@ export default function ScenariiPage() {
                     whileTap={selected ? {} : { scale: 0.98 }}
                     onClick={() => handleSelect(choice.id)}
                     disabled={!!selected}
-                    className={clsx(
-                      'w-full text-left card border-2 p-4 tap-target transition-colors',
-                      bg,
-                      choice.isFunny && !selected && 'border-purple-100 bg-purple-50/40'
-                    )}
+                    className="w-full text-left rounded-2xl p-4 tap-target"
+                    style={{ background: cardBg, border: `1px solid ${cardBorder}`, transition: 'all 0.2s' }}
                   >
                     <div className="flex items-start gap-3">
-                      <span className={clsx(
-                        'w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5',
-                        showResult && isCorrectChoice
-                          ? 'bg-emerald-500 text-white'
-                          : showResult && isSelected
-                          ? 'bg-red-400 text-white'
-                          : 'bg-gray-100 text-gray-600'
-                      )}>
+                      <span
+                        className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-display font-bold shrink-0 mt-0.5"
+                        style={{ background: labelBg, color: labelColor }}
+                      >
                         {choice.id.toUpperCase()}
                       </span>
-                      <p className={clsx('text-sm leading-relaxed', choice.isFunny ? 'italic text-purple-700' : 'text-pisi-text')}>
+                      <p className="text-sm leading-relaxed" style={{ color: choice.isFunny && !selected ? '#B44FFF' : '#C8C6E0', fontStyle: choice.isFunny ? 'italic' : 'normal' }}>
                         {choice.text}
-                        {choice.isFunny && <span className="text-purple-400"> 😄</span>}
+                        {choice.isFunny && <span style={{ color: '#B44FFF' }}> 😄</span>}
                       </p>
                     </div>
                   </motion.button>
@@ -187,9 +186,9 @@ export default function ScenariiPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-3"
               >
-                <div className="card p-4 bg-blue-50 border-blue-100">
-                  <p className="text-xs font-bold text-blue-600 mb-1">📖 Explicație</p>
-                  <p className="text-sm text-blue-800 leading-relaxed">{current.explanation}</p>
+                <div className="rounded-2xl p-4" style={{ background: 'rgba(75,127,255,0.08)', border: '1px solid rgba(75,127,255,0.3)' }}>
+                  <p className="text-xs font-bold mb-1" style={{ color: '#4B7FFF' }}>📖 Explicație</p>
+                  <p className="text-sm leading-relaxed" style={{ color: '#C8C6E0' }}>{current.explanation}</p>
                 </div>
                 <PrimaryButton onClick={handleNext} fullWidth>
                   {index < scenarios.length - 1 ? 'Scenariul următor →' : 'Finalizează! 🎉'}
