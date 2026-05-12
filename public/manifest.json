@@ -1,0 +1,22 @@
+{
+  "name": "PisiPilot",
+  "short_name": "PisiPilot",
+  "description": "Copilotul tău pufos pentru permis.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFF6F0",
+  "theme_color": "#FF6B6B",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,210 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Neon Cockpit Design System ─────────────────────────────────────────────── */
+
+:root {
+  --nav-h: 68px;
+  --safe-top:    env(safe-area-inset-top,    0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  color-scheme: dark;
+
+  /* Neon palette */
+  --c-cyan:   #00C8FF;
+  --c-pink:   #FF2A8A;
+  --c-lime:   #A8FF1E;
+  --c-orange: #FF6B1A;
+  --c-blue:   #4B7FFF;
+  --c-purple: #B44FFF;
+  --c-gold:   #FFD700;
+
+  /* Surfaces */
+  --s0: #05050C;
+  --s1: #08080F;
+  --s2: #0C0C18;
+  --s3: #121220;
+  --s4: #1A1A2C;
+
+  /* Glass card */
+  --glass-bg:      rgba(18,18,32,0.75);
+  --glass-border:  rgba(255,255,255,0.1);
+  --glass-hi:      rgba(255,255,255,0.14);   /* top highlight */
+  --glass-shadow:  0 4px 6px rgba(0,0,0,0.35), 0 20px 60px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  background-color: var(--s1);
+  /* Layered dark radials for depth */
+  background-image:
+    radial-gradient(ellipse 70% 50% at 15%   5%,  rgba( 0,200,255,0.07) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 45% at 88%  95%,  rgba(255, 42,138,0.07) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 50%  50%,  rgba(180, 79,255,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 80% at 50%  50%,  var(--s1) 0%, var(--s0) 100%);
+  min-height: 100dvh;
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #F2F0FF;
+}
+
+/* Subtle dot grid overlay — cockpit HUD feel */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Utility layer ───────────────────────────────────────────────────────────── */
+@layer utilities {
+
+  /* Safe area / nav */
+  .pb-safe  { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+  .pb-nav   { padding-bottom: calc(var(--nav-h) + max(20px, env(safe-area-inset-bottom))); }
+  .pt-safe  { padding-top:    max(16px, env(safe-area-inset-top)); }
+  .min-h-screen-safe { min-height: 100dvh; }
+  .tap-target { min-height: 48px; min-width: 48px; }
+
+  /* 3-D glass card — the signature card style */
+  .card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-top-color: var(--glass-hi);
+    border-radius: 20px;
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+  }
+  .card-lg {
+    background: rgba(14,14,28,0.8);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-top-color: rgba(255,255,255,0.2);
+    border-radius: 28px;
+    box-shadow: 0 8px 12px rgba(0,0,0,0.5), 0 32px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.16);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+  }
+
+  /* Neon card accents */
+  .card-cyan   { border-color: rgba(0,200,255,0.35);   box-shadow: var(--glass-shadow), 0 0 32px rgba(0,200,255,0.12);   }
+  .card-pink   { border-color: rgba(255,42,138,0.35);  box-shadow: var(--glass-shadow), 0 0 32px rgba(255,42,138,0.12);  }
+  .card-lime   { border-color: rgba(168,255,30,0.35);  box-shadow: var(--glass-shadow), 0 0 32px rgba(168,255,30,0.1);   }
+  .card-orange { border-color: rgba(255,107,26,0.35);  box-shadow: var(--glass-shadow), 0 0 32px rgba(255,107,26,0.12);  }
+  .card-blue   { border-color: rgba(75,127,255,0.35);  box-shadow: var(--glass-shadow), 0 0 32px rgba(75,127,255,0.12);  }
+  .card-purple { border-color: rgba(180,79,255,0.35);  box-shadow: var(--glass-shadow), 0 0 32px rgba(180,79,255,0.12);  }
+
+  /* Neon gradient buttons */
+  .btn-cyan   { background: linear-gradient(135deg,#00A8E8,#00C8FF); box-shadow: 0 0 20px rgba(0,200,255,0.5), 0 4px 16px rgba(0,200,255,0.2), inset 0 1px 0 rgba(255,255,255,0.2); }
+  .btn-pink   { background: linear-gradient(135deg,#E0006E,#FF2A8A); box-shadow: 0 0 20px rgba(255,42,138,0.5), 0 4px 16px rgba(255,42,138,0.2), inset 0 1px 0 rgba(255,255,255,0.2); }
+  .btn-lime   { background: linear-gradient(135deg,#82D400,#A8FF1E); box-shadow: 0 0 20px rgba(168,255,30,0.45), 0 4px 16px rgba(168,255,30,0.18), inset 0 1px 0 rgba(255,255,255,0.2); color:#0a1200; }
+  .btn-orange { background: linear-gradient(135deg,#E04400,#FF6B1A); box-shadow: 0 0 20px rgba(255,107,26,0.5), 0 4px 16px rgba(255,107,26,0.2), inset 0 1px 0 rgba(255,255,255,0.2); }
+  .btn-blue   { background: linear-gradient(135deg,#2A5AE0,#4B7FFF); box-shadow: 0 0 20px rgba(75,127,255,0.5), 0 4px 16px rgba(75,127,255,0.2), inset 0 1px 0 rgba(255,255,255,0.2); }
+  .btn-purple { background: linear-gradient(135deg,#8C00E0,#B44FFF); box-shadow: 0 0 20px rgba(180,79,255,0.5), 0 4px 16px rgba(180,79,255,0.2), inset 0 1px 0 rgba(255,255,255,0.2); }
+  .btn-ghost  { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); box-shadow: inset 0 1px 0 rgba(255,255,255,0.08); }
+
+  /* Neon text gradients */
+  .text-neon-cyan   { color: var(--c-cyan); text-shadow: 0 0 12px rgba(0,200,255,0.6); }
+  .text-neon-pink   { color: var(--c-pink); text-shadow: 0 0 12px rgba(255,42,138,0.6); }
+  .text-neon-lime   { color: var(--c-lime); text-shadow: 0 0 12px rgba(168,255,30,0.5); }
+  .text-neon-orange { color: var(--c-orange); text-shadow: 0 0 12px rgba(255,107,26,0.6); }
+  .text-neon-purple { color: var(--c-purple); text-shadow: 0 0 12px rgba(180,79,255,0.6); }
+  .text-neon-gold   { color: var(--c-gold); text-shadow: 0 0 12px rgba(255,215,0,0.5); }
+
+  .text-gradient-primary {
+    background: linear-gradient(135deg, var(--c-orange) 0%, var(--c-pink) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .text-gradient-cyan {
+    background: linear-gradient(135deg, var(--c-cyan) 0%, var(--c-blue) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  /* Status chips — dark tinted */
+  .chip-success { background: rgba(168,255,30,0.1);  border: 1px solid rgba(168,255,30,0.3);  color: #A8FF1E; }
+  .chip-error   { background: rgba(255,42,138,0.1);  border: 1px solid rgba(255,42,138,0.3);  color: #FF2A8A; }
+  .chip-warn    { background: rgba(255,215,0,0.1);   border: 1px solid rgba(255,215,0,0.3);   color: #FFD700; }
+  .chip-info    { background: rgba(75,127,255,0.1);  border: 1px solid rgba(75,127,255,0.3);  color: #4B7FFF; }
+  .chip-purple  { background: rgba(180,79,255,0.1);  border: 1px solid rgba(180,79,255,0.3);  color: #B44FFF; }
+  .chip-cyan    { background: rgba(0,200,255,0.1);   border: 1px solid rgba(0,200,255,0.3);   color: #00C8FF; }
+  .chip-orange  { background: rgba(255,107,26,0.1);  border: 1px solid rgba(255,107,26,0.3);  color: #FF6B1A; }
+
+  /* Neon badge ring */
+  .ring-neon-cyan   { box-shadow: 0 0 0 2px rgba(0,200,255,0.5),   0 0 12px rgba(0,200,255,0.3);   }
+  .ring-neon-pink   { box-shadow: 0 0 0 2px rgba(255,42,138,0.5),  0 0 12px rgba(255,42,138,0.3);  }
+  .ring-neon-orange { box-shadow: 0 0 0 2px rgba(255,107,26,0.5),  0 0 12px rgba(255,107,26,0.3);  }
+  .ring-neon-purple { box-shadow: 0 0 0 2px rgba(180,79,255,0.5),  0 0 12px rgba(180,79,255,0.3);  }
+  .ring-neon-lime   { box-shadow: 0 0 0 2px rgba(168,255,30,0.5),  0 0 12px rgba(168,255,30,0.25); }
+
+  /* HUD chip — tiny stat widget */
+  .hud-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.03em;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(8px);
+  }
+
+  /* Display font helper */
+  .font-display { font-family: var(--font-display, system-ui), system-ui, sans-serif; }
+
+  /* Gradient backgrounds */
+  .gradient-primary { background: linear-gradient(135deg, var(--c-orange) 0%, var(--c-pink)  100%); }
+  .gradient-cyan    { background: linear-gradient(135deg, var(--c-cyan)   0%, var(--c-blue)  100%); }
+  .gradient-mint    { background: linear-gradient(135deg, var(--c-lime)   0%, #34D399        100%); }
+  .gradient-purple  { background: linear-gradient(135deg, var(--c-purple) 0%, var(--c-blue)  100%); }
+}
+
+/* ── Resets ────────────────────────────────────────────────────────────────── */
+* { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+
+/* Headings use display font */
+h1, h2, h3 { font-family: var(--font-display, system-ui), system-ui, sans-serif; }
+
+/* Prevent iOS font-size zoom on input focus */
+input, textarea, select { font-size: 16px !important; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 0; background: transparent; }
+
+/* ── Range sliders — neon cockpit ──────────────────────────────────────────── */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 999px;
+  outline: none;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--c-orange), var(--c-pink));
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(255,107,26,0.6), 0 0 0 2px rgba(255,255,255,0.12);
+  transition: transform 0.1s;
+}
+input[type='range']::-webkit-slider-thumb:active { transform: scale(1.18); }
+input[type='range'].clutch::-webkit-slider-thumb {
+  background: linear-gradient(135deg, var(--c-purple), var(--c-blue));
+  box-shadow: 0 0 12px rgba(180,79,255,0.6), 0 0 0 2px rgba(255,255,255,0.12);
+}
+
+/* ── Motion preference ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
