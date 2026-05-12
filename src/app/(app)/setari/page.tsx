@@ -67,7 +67,10 @@ export default function SetariPage() {
           }}>🐱</div>
           <div>
             <div style={{ fontFamily:'Space Grotesk,system-ui', fontWeight:700, fontSize:16, color:INK }}>PisiPilot</div>
-            <div style={{ fontSize:11.5, color:FADE, marginTop:2 }}>v1.2 · Copilotul pufos al lui Gabu 🐾</div>
+            <div style={{ fontSize:11.5, marginTop:2 }}>
+              <span style={{ color:'#00C8FF', fontWeight:700, fontFamily:'Space Grotesk,system-ui', textShadow:'0 0 6px #00C8FF88' }}>v1.3</span>
+              <span style={{ color:FADE }}> · Copilotul pufos al lui Gabu 🐾</span>
+            </div>
           </div>
         </div>
         <div style={{

@@ -310,30 +310,25 @@ function Intersection({ scn, selected, onTap, result }: {
   )
 }
 
-// ─── Sign legend ──────────────────────────────────────────────
+// ─── Sign legend — real DRPCIV images ────────────────────────
+const SIGN_IMGS: Record<string, string> = {
+  stop:     '/signs/prio-stop.jpeg',
+  yield:    '/signs/prio-cedeaza.jpeg',
+  priority: '/signs/prio-drum-prioritate.jpeg',
+}
 function SignLegend({ type, label }: { type:'stop'|'yield'|'priority'; label:string }) {
   return (
     <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:6 }}>
-      <svg width="34" height="34" viewBox="-17 -17 34 34">
-        {type==='stop' && (
-          <>
-            <polygon points="-13,-6 -6,-13 6,-13 13,-6 13,6 6,13 -6,13 -13,6"
-              fill="#E0263A" stroke="#fff" strokeWidth="1.2"/>
-            <text y="3" textAnchor="middle" fill="#fff"
-              fontFamily="Space Grotesk, system-ui" fontWeight="900" fontSize="8">STOP</text>
-          </>
-        )}
-        {type==='yield' && (
-          <polygon points="0,12 -13,-10 13,-10" fill="#fff" stroke="#E0263A" strokeWidth="2.5"/>
-        )}
-        {type==='priority' && (
-          <>
-            <polygon points="0,-14 14,0 0,14 -14,0" fill="#FFD700" stroke="#fff" strokeWidth="1.5"/>
-            <polygon points="0,-10 10,0 0,10 -10,0" fill="none" stroke="#fff" strokeWidth="0.8"/>
-          </>
-        )}
-      </svg>
-      <div style={{ fontSize:9.5, color:SOFT, textAlign:'center', lineHeight:1.2 }}>{label}</div>
+      <div style={{
+        width:44, height:44, borderRadius:8, overflow:'hidden', background:'#fff',
+        boxShadow:'0 4px 12px rgba(0,0,0,0.5)',
+        display:'flex', alignItems:'center', justifyContent:'center',
+      }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={SIGN_IMGS[type]} alt={label} width={44} height={44}
+          style={{ objectFit:'contain', width:'100%', height:'100%' }}/>
+      </div>
+      <div style={{ fontSize:9.5, color:SOFT, textAlign:'center', lineHeight:1.2, maxWidth:64 }}>{label}</div>
     </div>
   )
 }
